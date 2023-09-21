@@ -1,0 +1,203 @@
+package org.jsp.controller;
+
+import java.util.List;
+import java.util.Scanner;
+
+import org.jsp.dao.MerchantDao;
+import org.jsp.dao.ProductDao;
+import org.jsp.dto.Merchant;
+import org.jsp.dto.Product;
+
+public class MerchantProductController {
+	static Scanner s=new Scanner(System.in);
+	static MerchantDao mdao=new MerchantDao();
+	static ProductDao pdao= new ProductDao();
+	
+	public static void main(String[] args) {
+		System.out.println("************************************");
+		System.out.println("1.Save Merchant");
+		System.out.println("2.Update Merchant");
+		System.out.println("3.Add Product");
+		System.out.println("4.Update Product");
+		System.out.println("5.Verify Merchant By ID");
+		System.out.println("6.Verify Merchant By Email");
+		System.out.println("7.Verify Merchant By ID");
+		System.out.println("8.Find Products By Merchant ID");
+		System.out.println("9.Find Products By Brand");
+		System.out.println("10.Find Products By Category ");
+		System.out.println("************************************");
+		int i=s.nextInt();
+		switch(i) {
+		case 1:
+			saveMerchant();
+			break;
+			
+		case 2:
+			updateMerchant();
+			break;
+			
+		case 3:
+			saveProd();
+			break;
+			
+		case 4:
+			updateProd();
+			break;
+			
+		case 5:
+			verifyById();
+			break;
+			
+		case 6:
+			verifyByPhone();
+			break;
+			
+		case 7:
+			verifyByEmail();
+			break;
+		case 9:
+			findByBrand();
+			break;
+		}
+		
+	}	
+	public static void saveMerchant() {
+		System.out.println("Enter name");
+		String name=s.next();
+		System.out.println("Enter phone");
+		long phone=s.nextLong();
+		System.out.println("Enter email");
+		String email=s.next();
+		System.out.println("Enter GST");
+		String gst=s.next();
+		System.out.println("Enter password");
+		String password=s.next();
+		Merchant m=new Merchant();
+		m.setEmail(email);m.setGst(gst);m.setName(name);m.setPassword(password);m.setPhone(phone);
+		mdao.saveMerchant(m);
+		System.out.println("Saved");
+	}
+	public static void updateMerchant() {
+		System.out.println("Enter Id to Update");
+		int id=s.nextInt();
+		if(mdao.findById(id)!=null)
+		{
+			System.out.println("Enter name");
+			String name=s.next();
+			System.out.println("Enter phone");
+			long phone=s.nextLong();
+			System.out.println("Enter email");
+			String email=s.next();
+			System.out.println("Enter GST");
+			String gst=s.next();
+			System.out.println("Enter password");
+			String password=s.next();
+			Merchant m=new Merchant();
+			m.setEmail(email);m.setGst(gst);m.setName(name);m.setPassword(password);m.setPhone(phone);m.setId(id);
+			mdao.updateMerchant(m);
+			System.out.println("Updated");
+		}
+		else System.out.println("ID Not Found");
+	}
+
+	public static void verifyById() {
+		System.out.println("Enter Id");
+		int id=s.nextInt();
+		System.out.println("Enter password");
+		String password=s.next();
+		try {
+			mdao.verifyById(id, password);
+			System.out.println("Verified");
+		} catch (Exception e) {
+			System.out.println("Invalid Credentials");
+		}
+	}
+		public static void verifyByEmail() {
+			System.out.println("Enter Email");
+			String email=s.next();
+			System.out.println("Enter password");
+			String password=s.next();
+			try {
+				mdao.verifyByEmail(email, password);
+				System.out.println("Verified");
+			} catch (Exception e) {
+				System.out.println("Invalid Credentials");
+			}
+		}
+			public static void verifyByPhone() {
+				System.out.println("Enter Phone Number");
+				long phone=s.nextLong();
+				System.out.println("Enter password");
+				String password=s.next();
+				try {
+					mdao.verifyByphone(phone, password);
+					System.out.println("Verified");
+				} catch (Exception e) {
+					System.out.println("Invalid Credentials");
+				}
+			}
+			/******************************************************************/
+			
+			public static void saveProd() {
+				System.out.println("Enter Merchant Id");
+				int m_id=s.nextInt();
+				Merchant m=mdao.findById(m_id);
+				if(m!=null) {
+					System.out.println("Enter name");
+					String name=s.next();
+					System.out.println("Enter brand");
+					String brand=s.next();
+					System.out.println("Enter description");
+					String desc=s.next();
+					System.out.println("Enter category");
+					String cat=s.next();
+					System.out.println("Enter cost");
+					double cost=s.nextDouble();
+					Product p=new Product();
+					p.setBrand(brand);p.setCategory(cat);p.setCost(cost);p.setDescription(desc);p.setMerchants(m);p.setName(name);
+					pdao.saveProduct(p, m_id);
+					System.out.println("Saved with id "+p.getId());	
+				}
+				else
+					System.out.println("Id Not Found");
+			}
+			public static void updateProd() {
+				System.out.println("Enter Product Id");
+				int id=s.nextInt();
+				if(pdao.findById(id)!=null) {
+					System.out.println("Enter name");
+					String name=s.next();
+					System.out.println("Enter brand");
+					String brand=s.next();
+					System.out.println("Enter description");
+					String desc=s.next();
+					System.out.println("Enter category");
+					String cat=s.next();
+					System.out.println("Enter cost");
+					double cost=s.nextDouble();
+					System.out.println("Enter Merchant Id");
+					int mid=s.nextInt();
+					Product p=new Product();
+					Merchant m=mdao.findById(mid);
+					p.setBrand(brand);p.setCategory(cat);p.setCost(cost);p.setDescription(desc);p.setName(name);p.setId(id);p.setMerchants(m);
+					pdao.updateProduct(p);
+					System.out.println("Updated");	
+				}
+				else
+					System.out.println("Id Not Found");
+			}
+			
+			public static void findByBrand() {
+				System.out.println("Enter Brand Name");
+				String brand=s.next();
+				List<Product> prod=pdao.findByBrand(brand);
+				if(prod!=null) {
+					for(Product p:prod) {
+						System.out.println(p);
+					}					
+				}
+				else
+					System.out.println("Not Found");
+			}
+	}
+

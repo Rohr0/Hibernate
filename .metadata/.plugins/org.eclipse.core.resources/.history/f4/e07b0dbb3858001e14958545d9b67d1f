@@ -1,0 +1,16 @@
+package org.jsp.dao;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
+
+import org.jsp.dto.Merchant;
+
+public class MerchantDao {
+	public EntityManager manager=Persistence.createEntityManagerFactory("dev").createEntityManager();
+	
+	public Merchant saveMerchant(Merchant m) {
+		EntityTransaction t=manager.getTransaction();
+	}
+
+}
